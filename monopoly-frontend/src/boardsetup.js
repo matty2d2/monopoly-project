@@ -5,6 +5,28 @@ const middleBoard = document.createElement('div');
 middleBoard.id = 'middle-board';
 theBoard.append(middleBoard);
 
+const communityDiv = document.createElement('div');
+communityDiv.className = 'slanted';
+communityDiv.style = 'left: 6.8%; top: 11%';
+
+const chanceDiv = document.createElement('div');
+chanceDiv.className = 'slanted';
+chanceDiv.style = 'right: 6.9%; bottom: 10%';
+middleBoard.append(chanceDiv, communityDiv);
+
+const diceDiv = document.createElement('div');
+diceDiv.id = 'dice-area';
+middleBoard.append(diceDiv);
+
+const rollButton = document.createElement('button');
+rollButton.id = 'roll-button';
+rollButton.innerText = 'Roll Dice 🎲 🎲';
+rollButton.style = 'position: absolute; left: 30%; top: 4%;';
+
+const rollsDisplay = document.createElement('div');
+rollsDisplay.id = 'rolls-display';
+rollsDisplay.style = 'padding-top: 5%;'
+diceDiv.append(rollButton, rollsDisplay);
 
 const createBotVerticalCards = (j, array) => {
     row.forEach(i=>{
