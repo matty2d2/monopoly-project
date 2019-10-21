@@ -7,6 +7,7 @@ class CreateProperties < ActiveRecord::Migration[6.0]
       t.integer :rent
       t.integer :mortgage_val
       t.integer :player_id
+      t.string :url
 
       t.timestamps
     end

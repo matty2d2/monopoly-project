@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 2019_10_21_080808) do
     t.integer "rent"
     t.integer "mortgage_val"
     t.integer "player_id"
+    t.string "url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
