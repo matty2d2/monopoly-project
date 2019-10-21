@@ -15,7 +15,6 @@ class PlayersController < ApplicationController
         player.cash = params[:cash]
         player.currently_on = params[:currently_on]
 
-        byebug
         player.save
         render json: PlayerSerializer.new(player).to_serialized_json
     end
