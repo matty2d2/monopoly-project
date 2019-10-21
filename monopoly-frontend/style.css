@@ -74,7 +74,7 @@ main {
 #the-board{
     position: relative;
     display: inline-block;
-    max-width: 55%;
+    max-width: 75%;
 }
 
 #dice-area{
