@@ -25,11 +25,19 @@ function objectify(response){
 
 
 const getProperties = () => {
-    return fetch(propertiesURL)
-        .then(objectify)
+  return fetch(propertiesURL)
+      .then(objectify)
 }
 
 const getProperty = (property_id) => {
   return fetch(propertiesURL+property_id)
     .then(objectify)
 }
+
+const patchPlayer = (player) => {
+  const method = 'PATCH';
+  return fetch(playersURL+player.id, configObj(player, method))
+    .then(objectify)
+}
+
+

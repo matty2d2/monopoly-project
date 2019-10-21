@@ -10,9 +10,13 @@ class PlayersController < ApplicationController
         render json: PlayerSerializer.new(player).to_serialized_json
     end
 
-    def get
-        player = Player.find_by(name: params[:name])
+    def update
+        player = Player.find(params[:id])
+        player.cash = params[:cash]
+        player.currently_on = params[:currently_on]
+
+        byebug
+        player.save
         render json: PlayerSerializer.new(player).to_serialized_json
     end
-
 end
