@@ -60,9 +60,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const playerAction = (property) => {
             if (nonProperty(property)){
-                console.log('Do Non-Property action');
-                if (property.id == 1){
-
+                if ([3,18,34].includes(property.id)){
+                    console.log('Pick up a Community Chest card');
+                }else if ([8,23,37].includes(property.id)){
+                    console.log('Pick up a Chance card');
+                }else if ([5,39].includes(property.id)){
+                    console.log('tax must be paid')
+                }else if (property.id == 21){
+                    console.log('collect cash from the middle')
+                }else if (property.id == 31){
+                    console.log('go to jail')
                 }
             }else{
                 if (property.player.id == 1){
@@ -117,21 +124,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const displayProperty = (property) => {
         removeChildren(propertyShow);
+      
         const name = document.createElement('h1');
         name.innerText = property.name;
+      
+        const image = document.createElement('img');
+        image.src = property.url;
+        image.style = 'max-height: 15%;'
+      
         const set = document.createElement('h2');
         set.innerText = property.set + ' Colour Set'
+      
         const price = document.createElement('h2');
         price.innerText = `Price: ${property.price}M`;
+      
         const rent = document.createElement('p');
-        rent.innerText = `Rent: ${property.rent}`;
+        rent.innerText = `Rent: ${property.rent}M`;
+      
         const mortgage = document.createElement('p');
-        mortgage.innerText = `Mortgage: ${property.mortgage_val}`;
-        const image = document.createElement('img')
-        image.src = property.url
-
-        propertyShow.append(name,set,price,rent,mortgage, image);
-        
+        mortgage.innerText = `Mortgage: ${property.mortgage_val}M`;
+      
+        propertyShow.append(name,image,set,price,rent,mortgage);
     }
 
     const displayPlayer = player =>{
