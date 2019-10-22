@@ -45,4 +45,8 @@ const getPlayer = player =>{
     .then(objectify)
 }
 
+const getPlayers = () => {
+  return fetch(playersURL)
+    .then(objectify)
+}
 
