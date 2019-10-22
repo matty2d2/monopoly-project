@@ -20,15 +20,10 @@ const diceDiv = document.createElement('div');
 diceDiv.id = 'dice-area';
 middleBoard.append(diceDiv);
 
-const rollButton = document.createElement('button');
-rollButton.id = 'roll-button';
-rollButton.innerText = 'Roll 🎲 🎲';
-rollButton.style = 'position: absolute; left: 30%; top: 4%;';
-
 const rollsDisplay = document.createElement('div');
 rollsDisplay.id = 'rolls-display';
 rollsDisplay.style = 'padding-top: 5%;'
-diceDiv.append(rollButton, rollsDisplay);
+diceDiv.append(rollsDisplay);
 
 const createBotVerticalCards = (j, array) => {
     row.forEach(i=>{
