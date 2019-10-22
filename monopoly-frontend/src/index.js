@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const diceDisplay = document.getElementById('rolls-display');
     const theRollButton = document.getElementById('roll-button');
     const propertyShow = document.getElementById('show-property');
+    const playerShow = document.getElementById('show-player');
 
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
@@ -34,17 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
             player.currently_on  = newPos;
 
             if (newPos < oldPos){
-                //player has passed go (I think)
+                //player has passed go
                 player.cash += 200;
                 patchPlayer(player)
-                    .then(json => {
-                        console.log(json);
-                        updatePlayerProfile(json);
-                    })
-            }
+                .then(displayPlayer(player))
+                }
+                
         }
         
         const placePlayerOnBoard = (player) => {
+            getPlayer(player).then(displayPlayer(player))
             const tile = document.getElementById(`${player.currently_on}`);
             createPlayerImg(player, tile);
 
@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const placePlayerOnGo = (player) => {
+            getPlayer(player).then(displayPlayer(player))
             const tile = document.getElementById(`${player.currently_on}`);
             createPlayerImg(player, tile);
         }
@@ -123,24 +124,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const displayProperty = (property) => {
         removeChildren(propertyShow);
+      
         const name = document.createElement('h1');
         name.innerText = property.name;
+      
         const image = document.createElement('img');
         image.src = property.url;
         image.style = 'max-height: 15%;'
+      
         const set = document.createElement('h2');
         set.innerText = property.set + ' Colour Set'
+      
         const price = document.createElement('h2');
         price.innerText = `Price: ${property.price}M`;
+      
         const rent = document.createElement('p');
         rent.innerText = `Rent: ${property.rent}M`;
+      
         const mortgage = document.createElement('p');
         mortgage.innerText = `Mortgage: ${property.mortgage_val}M`;
-
+      
         propertyShow.append(name,image,set,price,rent,mortgage);
-        
     }
 
+    const displayPlayer = player =>{
+        removeChildren(playerShow)
+        const name = document.createElement('h1')
+        const cash = document.createElement('h2')
+        const ul = document.createElement('ul')
+        
+        name.innerText = player.name
+        cash.innerText = player.cash + 'M'
+        // let properties;
+        if (player.properties){
+            
+            player.properties.forEach(property =>{
+                const propertyLi = document.createElement('li')
+                propertyLi.innerText = property
+                ul.append(name,cash, propertyLi)
+            })    
+        }else {
+            ul.append(name,cash)
+        }
+
+        playerShow.append(ul)
+
+    }
     const updatePlayerProfile = (player) => {
         console.log('will implement profile and update');
     }
@@ -148,6 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
     getProperties()
         .then(createBoardDivs)
         .then(playGame)
+
+    // getPlayer(player1).then(displayPlayer(player1))
     
 })
 
