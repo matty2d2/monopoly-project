@@ -40,4 +40,9 @@ const patchPlayer = (player) => {
     .then(objectify)
 }
 
+const getPlayer = player =>{
+  return fetch(playersURL+player.id)
+    .then(objectify)
+}
+
 
