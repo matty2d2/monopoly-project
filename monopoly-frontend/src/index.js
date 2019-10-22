@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////CONSTANTS///////////////////////////////////
     console.log('Dom content loaded');
-    const player1 = {id: 2, name: 'Abdullah', cash: 1500, piece: 'https://www.emoji.co.uk/files/apple-emojis/symbols-ios/956-large-red-circle.png', currently_on: 1}
+    const player1 = {id: 2, name: 'Abdullah', cash: 1500, piece: './src/images/pic4.png', currently_on: 1}
     const diceDisplay = document.getElementById('rolls-display');
     const theRollButton = document.getElementById('roll-button');
     const propertyShow = document.getElementById('show-property');
@@ -95,7 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const newImg = document.createElement('img');
             newImg.id = `player-${player.id}`
             newImg.src = player.piece;
-            newImg.style = 'position: absolute; max-width: 20%; left: 50%; top: 50%;'
+            newImg.className = "playerImg"
+            // newImg.style = 'position: absolute; max-width: 20%; left: 50%; top: 50%;'
             tile.append(newImg);
     }
 
@@ -170,9 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
         playerShow.append(ul)
 
     }
-    const updatePlayerProfile = (player) => {
-        console.log('will implement profile and update');
+    
+    const createStartingForm = ()=>{
+        
+      
     }
+    
     //////////////////////////////////////////////////////////////////////////////
     getProperties()
         .then(createBoardDivs)
