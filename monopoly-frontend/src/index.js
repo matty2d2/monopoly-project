@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const propertyShow = document.getElementById('show-property');
     const playerShow = document.getElementById('show-player');
     const showMiddle = document.getElementById('middle-show');
+    const endButtonContainer = document.getElementById('end-button-container');
     
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
     //////////////////////////////////////////////////////////////////////////////
     const playerTurn = (player, array) => {  
         player.current_turn = true;
-        // displayPlayer(player);
         patchPlayer(player)
             .then(json => {
                 displayPlayer(json);
@@ -78,27 +78,29 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(b=> {
                 b.current_turn = true;
                 displayEndTurnButton(b, array)
-                // patchPlayer(b)
-                    // .then(json => displayEndTurnButton(json, array))
             })
     }
 
     const displayEndTurnButton = (player, array) => {
         const endButton = document.createElement('button');
         endButton.innerText = 'End Turn';
-        diceDisplay.append(endButton);
+        endButtonContainer.append(endButton);
         endButton.addEventListener('click', () => newTurn(player, array));
+        endButton.removeEventListener
     }
 
     const newTurn = (player, array) => {
         removeChildren(diceDisplay);
+        removeChildren(endButtonContainer);
+        removeChildren(showMiddle);
+        showMiddle.className = 'hidden';
         playerTurn(player, array)
     }
 
     const removePlayerFromPreviousLocation = (player) => {
-        const oldTile = document.getElementById(`${player.currently_on}`);
+        // const oldTile = document.getElementById(`${player.currently_on}`);
         const to_remove = document.getElementById(`player-${player.id}`);
-        oldTile.removeChild(to_remove);
+        to_remove.remove();
     }
 
     const updatePositionFromRoll = (player) => {
@@ -106,11 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const total = diceVals[0] + diceVals[1];
         const oldPos = player.currently_on
         let newPos = (total + oldPos) % 40;
+        showMiddle.className = 'hidden';
         if (newPos == 0){newPos = 40;}
         player.currently_on  = newPos;
 
         if (newPos < oldPos){
-            //player has passed go
             player.cash += 200;
             patchPlayer(player)
                 .then(displayPlayer(player))
@@ -143,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
             newImg.id = `player-${player.id}`
             newImg.src = player.piece;
             newImg.className = "playerImg"
-            // newImg.style = 'position: absolute; max-width: 20%; left: 50%; top: 50%;'
             tile.append(newImg);
     }
 
@@ -154,39 +155,74 @@ document.addEventListener('DOMContentLoaded', () => {
             }else if ([8,23,37].includes(property.id)){
                 console.log('Pick up a Chance card');
             }else if ([5,39].includes(property.id)){
-                alert('you payed some tax');
                 payTax(player, property);
                 console.log('add cash paid to middle');
             }else if (property.id == 21){
                 console.log('collect cash from the middle')
             }else if (property.id == 31){
                 console.log('go to jail')
+                goToJailMessage();
                 movePlayerDirectlyToLocation(player, 11);
             }
         }else{
             if (property.player.id == 1){
-                console.log(`Would you like to buy ${property.name}?`);
                 askToBuy(player, property);
                 displayProperty(property);
-            } else {
-                console.log(`You must pay ${property.owner.name} £${property.rent}M.`);
+            } else if (property.player.id == player.id){
+                youOwnThis(property);
+            } 
+            else{
+                console.log(`You must pay ${property.player.name} £${property.rent}M.`);
+                payPropertyOwner(player, property)
             }
         }
     }
+
+    const goToJailMessage = () => {
+        const newP = document.createElement('p');
+        newP.innerText = `Oops... You landed on Go To Jail!`;
+        newP.style = 'color: white;';
+        showMiddle.append(newP);
+        showMiddle.className = '';
+    }
+
+    const youOwnThis = (property) => {
+        const newP = document.createElement('p');
+        newP.innerText = `You own ${property.name}. Welcome Back!`;
+        newP.style = 'color: white;';
+        showMiddle.append(newP);
+        showMiddle.className = '';
+    }
+
+    const payPropertyOwner = (player, property) => {
+        const payer = player;
+        const payee = property.player;
+        const newP = document.createElement('p');
+        newP.innerText = `${property.player.name} owns ${property.name}. You paid them £${property.rent}M for rent.`;
+        newP.style = 'color: white;';
+        showMiddle.append(newP);
+        showMiddle.className = '';
+        payer.cash -= property.rent;
+        payee.cash += property.rent;
+        patchPlayer(payer)
+            .then(json=>{
+                displayPlayer(json);
+                patchPlayer(payee);
+            })
+
+    }
+
     const askToBuy = (player, property) => {
         removeChildren(showMiddle);
         showMiddle.className = '';
         const title = document.createElement('p');
         title.style = 'color: white;'
         const buyButton = document.createElement('button');
-        const noBuyButton = document.createElement('button');
 
         title.innerText = `Would you like to buy ${property.name}?`;
         buyButton.innerText = 'Buy';
-        noBuyButton.innerText = "Don't Buy";
-        showMiddle.append(title, noBuyButton, buyButton)
+        showMiddle.append(title, buyButton)
 
-        noBuyButton.addEventListener('click', dontBuyProperty)
         buyButton.addEventListener('click', () => buyProperty(player,property))
     }   
 
@@ -202,10 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         .then(displayPlayer)
                 })
         }
-    }
-
-    const dontBuyProperty = () => {
-        showMiddle.className = 'hidden';
     }
 
     const movePlayerDirectlyToLocation = (player, property_id) => {
@@ -232,6 +264,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const payTax = (player, property) => {
+        const newP = document.createElement('p');
+        newP.innerText = `You payed ${property.price}M in tax!`
+        newP.style = 'color: white;';
+        showMiddle.append(newP);
+        showMiddle.className = '';
         player.cash -= property.price;
         patchPlayer(player)
             .then(displayPlayer)
