@@ -2,11 +2,11 @@
     width: 90%;
 }
 
-.slanted {
+/* .slanted {
     position: absolute;
     width: 25%;
     height: 17%;
-    transform: rotate(-45deg);
+    transform: rotate(-45deg); */
 }
 
 header {
@@ -107,7 +107,7 @@ main {
 
 .playerImg {
     position: absolute; 
-    width: 50%; 
+    width: 30%; 
     left: 25%; 
     top: 25%;
 }
@@ -125,4 +125,10 @@ main {
   .form {
     display: flex;
     justify-content: center;
+  }
+
+  #end-button-container{
+      position: absolute;
+      left: 5%;
+      top: 5%;
   }

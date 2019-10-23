@@ -12,14 +12,9 @@ middleShow.id = 'middle-show';
 middleShow.className = 'hidden';
 middleBoard.append(middleShow);
 
-const communityDiv = document.createElement('div');
-communityDiv.className = 'slanted';
-communityDiv.style = 'left: 6.8%; top: 11%';
-
-const chanceDiv = document.createElement('div');
-chanceDiv.className = 'slanted';
-chanceDiv.style = 'right: 6.9%; bottom: 10%';
-middleBoard.append(chanceDiv, communityDiv);
+const endDiv = document.createElement('div');
+endDiv.id = 'end-button-container';
+middleBoard.append(endDiv);
 
 const diceDiv = document.createElement('div');
 diceDiv.id = 'dice-area';
