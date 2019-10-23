@@ -86,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
         endButton.innerText = 'End Turn';
         endButtonContainer.append(endButton);
         endButton.addEventListener('click', () => newTurn(player, array));
-        endButton.removeEventListener
     }
 
     const newTurn = (player, array) => {
