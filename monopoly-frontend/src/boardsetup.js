@@ -7,6 +7,11 @@ const middleBoard = document.createElement('div');
 middleBoard.id = 'middle-board';
 theBoard.append(middleBoard);
 
+const middleShow = document.createElement('div');
+middleShow.id = 'middle-show';
+middleShow.className = 'hidden';
+middleBoard.append(middleShow);
+
 const communityDiv = document.createElement('div');
 communityDiv.className = 'slanted';
 communityDiv.style = 'left: 6.8%; top: 11%';
@@ -20,15 +25,10 @@ const diceDiv = document.createElement('div');
 diceDiv.id = 'dice-area';
 middleBoard.append(diceDiv);
 
-const rollButton = document.createElement('button');
-rollButton.id = 'roll-button';
-rollButton.innerText = 'Roll 🎲 🎲';
-rollButton.style = 'position: absolute; left: 30%; top: 4%;';
-
 const rollsDisplay = document.createElement('div');
 rollsDisplay.id = 'rolls-display';
 rollsDisplay.style = 'padding-top: 5%;'
-diceDiv.append(rollButton, rollsDisplay);
+diceDiv.append(rollsDisplay);
 
 const createBotVerticalCards = (j, array) => {
     row.forEach(i=>{

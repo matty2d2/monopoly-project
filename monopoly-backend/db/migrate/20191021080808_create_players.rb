@@ -5,6 +5,7 @@ class CreatePlayers < ActiveRecord::Migration[6.0]
       t.integer :cash
       t.string :piece
       t.integer :currently_on
+      t.boolean :current_turn, :default => false
 
       t.timestamps
     end

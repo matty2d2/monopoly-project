@@ -14,6 +14,7 @@ class PlayersController < ApplicationController
         player = Player.find(params[:id])
         player.cash = params[:cash]
         player.currently_on = params[:currently_on]
+        player.current_turn = params[:current_turn]
         player.save
         render json: PlayerSerializer.new(player).to_serialized_json
     end
