@@ -34,6 +34,12 @@ const getProperty = (property_id) => {
     .then(objectify)
 }
 
+const patchProperty = (property) => {
+  const method = 'PATCH';
+  return fetch(propertiesURL+property.id, configObj(property, method))
+    .then(objectify)
+}
+
 const patchPlayer = (player) => {
   const method = 'PATCH';
   return fetch(playersURL+player.id, configObj(player, method))

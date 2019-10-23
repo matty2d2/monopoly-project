@@ -7,6 +7,11 @@ const middleBoard = document.createElement('div');
 middleBoard.id = 'middle-board';
 theBoard.append(middleBoard);
 
+const middleShow = document.createElement('div');
+middleShow.id = 'middle-show';
+middleShow.className = 'hidden';
+middleBoard.append(middleShow);
+
 const communityDiv = document.createElement('div');
 communityDiv.className = 'slanted';
 communityDiv.style = 'left: 6.8%; top: 11%';
