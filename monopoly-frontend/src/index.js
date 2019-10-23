@@ -172,17 +172,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
     
-    const createStartingForm = ()=>{
+    const form = document.querySelector('form')
+    form.addEventListener('submit', e=>{
+        e.preventDefault()
         
-      
-    }
+        const name = e.target.name.value;
+        const number = e.target.number.value;
+        const cash = 1500;
+        const piece = "./src/images/pic1.jpeg";
+        const currently_on = 0;
+        const new_player = { name: name, cash: cash, piece: piece, currently_on: currently_on }
+        postPlayer(new_player)
+    })
     
     //////////////////////////////////////////////////////////////////////////////
     getProperties()
         .then(createBoardDivs)
         .then(playGame)
 
-    // getPlayer(player1).then(displayPlayer(player1))
     
 })
 
