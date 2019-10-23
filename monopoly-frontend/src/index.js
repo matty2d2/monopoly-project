@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const diceDisplay = document.getElementById('rolls-display');
     const propertyShow = document.getElementById('show-property');
     const playerShow = document.getElementById('show-player');
+    const showMiddle = document.getElementById('middle-show');
     
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
@@ -73,14 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
         player.current_turn = false;
         const nextPlayerIndex = (array.indexOf(player.id) + 1) % array.length;
         const nextPlayer = {id: array[nextPlayerIndex], current_turn: true};
-        patchPlayer(player);
+        patchPlayer(player)
         getPlayer(nextPlayer)
             .then(b=> {
                 b.current_turn = true;
-                patchPlayer(b)
-                    .then(json => displayEndTurnButton(json, array))
+                displayEndTurnButton(b, array)
+                // patchPlayer(b)
+                    // .then(json => displayEndTurnButton(json, array))
             })
-            
     }
 
     const displayEndTurnButton = (player, array) => {
@@ -138,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(json => playerAction(player, json))
     }
 
-    const createPlayerImg = (player, tile) =>{
+    const createPlayerImg = (player, tile) => {
         const newImg = document.createElement('img');
             newImg.id = `player-${player.id}`
             newImg.src = player.piece;
@@ -165,11 +166,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }else{
             if (property.player.id == 1){
                 console.log(`Would you like to buy ${property.name}?`);
+                askToBuy(player, property);
                 displayProperty(property);
             } else {
                 console.log(`You must pay ${property.owner.name} £${property.rent}M.`);
             }
         }
+    }
+    const askToBuy = (player, property) => {
+        removeChildren(showMiddle);
+        showMiddle.className = '';
+        const title = document.createElement('p');
+        title.style = 'color: white;'
+        const buyButton = document.createElement('button');
+        const noBuyButton = document.createElement('button');
+
+        title.innerText = `Would you like to buy ${property.name}?`;
+        buyButton.innerText = 'Buy';
+        noBuyButton.innerText = "Don't Buy";
+        showMiddle.append(title, noBuyButton, buyButton)
+
+        noBuyButton.addEventListener('click', dontBuyProperty)
+        buyButton.addEventListener('click', () => buyProperty(player,property))
+    }   
+
+    const buyProperty = (player, property) => {
+        showMiddle.className = 'hidden';
+        if (player.cash>property.price){
+            player.cash -= property.price;
+            property.player = player
+            patchProperty(property)
+                .then(json => {
+                    displayProperty(json);
+                    getPlayer(player)
+                        .then(displayPlayer)
+                })
+        }
+    }
+
+    const dontBuyProperty = () => {
+        showMiddle.className = 'hidden';
     }
 
     const movePlayerDirectlyToLocation = (player, property_id) => {
@@ -234,8 +270,11 @@ document.addEventListener('DOMContentLoaded', () => {
       
         const mortgage = document.createElement('p');
         mortgage.innerText = `Mortgage: ${property.mortgage_val}M`;
+
+        const owner = document.createElement('p');
+        owner.innerText = `Owned by: ${property.player.name}`
       
-        propertyShow.append(name,image,set,price,rent,mortgage);
+        propertyShow.append(name,image,set,price,rent,mortgage, owner);
     }
 
     const displayPlayer = (player) =>{
@@ -252,12 +291,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (player.properties){
             player.properties.forEach(property =>{
                 const propertyLi = document.createElement('li')
-                propertyLi.innerText = property
-                ul.append(name,cash, propertyLi)
+                propertyLi.innerText = property.name
+                ul.append(propertyLi)
             })    
         }
             
-        playerShow.append(ul)
+        playerShow.append(name,cash, ul)
     }
     //////////////////////////////////////////////////////////////////////////////
     getProperties()
