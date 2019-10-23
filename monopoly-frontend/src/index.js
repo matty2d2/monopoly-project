@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     //////////////////////CONSTANTS///////////////////////////////////
     console.log('Dom content loaded');
 
-    //const player1 = {id: 2, name: 'Abdullah', cash: 1500, piece: 'https://www.emoji.co.uk/files/apple-emojis/symbols-ios/956-large-red-circle.png', currently_on: 1}
     const diceDisplay = document.getElementById('rolls-display');
     const propertyShow = document.getElementById('show-property');
     const playerShow = document.getElementById('show-player');
@@ -143,7 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const newImg = document.createElement('img');
             newImg.id = `player-${player.id}`
             newImg.src = player.piece;
-            newImg.style = 'position: absolute; max-width: 20%; left: 50%; top: 50%;'
+            newImg.className = "playerImg"
+            // newImg.style = 'position: absolute; max-width: 20%; left: 50%; top: 50%;'
             tile.append(newImg);
     }
 
@@ -286,8 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
         name.innerText = player.name;
         cash.innerText = player.cash + 'M';
 
-        ul.append(name,cash)
-
         if (player.properties){
             player.properties.forEach(property =>{
                 const propertyLi = document.createElement('li')
@@ -295,9 +293,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 ul.append(propertyLi)
             })    
         }
-            
         playerShow.append(name,cash, ul)
     }
+    
+    const form = document.querySelector('form')
+    form.addEventListener('submit', e=>{
+        e.preventDefault()
+        
+        const name = e.target.name.value;
+        const number = e.target.number.value;
+        const cash = 1500;
+        const piece = "./src/images/pic1.jpeg";
+        const currently_on = 0;
+        const new_player = { name: name, cash: cash, piece: piece, currently_on: currently_on }
+        postPlayer(new_player)
+    })
+    
+    //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
     getProperties()
         .then(createBoardDivs)
