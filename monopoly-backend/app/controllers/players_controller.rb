@@ -18,4 +18,14 @@ class PlayersController < ApplicationController
         player.save
         render json: PlayerSerializer.new(player).to_serialized_json
     end
+
+    def create
+        player = Player.create(player_params)
+        
+        render json: PlayerSerializer.new(player).to_serialized_json
+    end
+
+    def player_params
+        params.require(:player).permit(:name, :cash, :piece, :currently_on)
+    end
 end

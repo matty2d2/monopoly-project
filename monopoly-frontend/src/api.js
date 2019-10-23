@@ -51,6 +51,12 @@ const getPlayer = player =>{
     .then(objectify)
 }
 
+const postPlayer = player =>{
+  const method = "POST"
+  return fetch(playersURL, configObj(player, method))
+    .then(objectify)
+} 
+
 const getPlayers = () => {
   return fetch(playersURL)
     .then(objectify)
