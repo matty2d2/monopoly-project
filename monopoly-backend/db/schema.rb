@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2019_10_21_080808) do
     t.string "piece"
     t.integer "currently_on"
     t.boolean "current_turn", default: false
+    t.integer "jail_turn", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

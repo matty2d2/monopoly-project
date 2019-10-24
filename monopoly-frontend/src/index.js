@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     /////////////////////////////////////////////////////////////////////////////
     const playerTurn = (player, array) => {  
-        removeChildren(showMiddle);
+        removeShowMiddle();
         displayPlayerTurn(player)   
         player.current_turn = true;
         patchPlayer(player)
@@ -97,8 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
         removeChildren(showMiddle);
         removePlayerFromBoard(player);
         const diceVals = updatePositionFromRoll(player);
-        const extraTurn = diceVals[0] == diceVals[1];
-        placePlayerOnBoard(player, array, extraTurn);
+        // const extraTurn = diceVals[0] == diceVals[1];
+        placePlayerOnBoard(player, array, diceVals);
     }
     //////////REMOVE PLAYER IMG FROM BOARD/////////////////////////////
     const removePlayerFromBoard = (player) => {
@@ -138,12 +138,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     ////////PLACE PLAYER ON BOARD TO UPDATED POSITION///////////////////////////////
     const placePlayerOnBoard = (player, array, extraTurn) => {
-        getPlayer(player).then(displayPlayer(player))
-        const tile = document.getElementById(`${player.currently_on}`);
-        createPlayerImg(player, tile);
+        const tile = showPlayerOnBoard(player);
 
         getProperty(tile.id)
             .then(json => playerAction(player, json, array, extraTurn))
+    }
+    /////////////////////////////////////////////////////////////////////////////
+    //////////SHOW PLAYER ON BOARD///////////////////////////
+    const showPlayerOnBoard = (player) => {
+        getPlayer(player).then(displayPlayer(player))
+        const tile = document.getElementById(`${player.currently_on}`);
+        createPlayerImg(player, tile);
+        return tile;
     }
     /////////////////////////////////////////////////////////////////////////////
     //////////PLAYER ACTION ON LANDED TILE///////////////////////////
@@ -157,15 +163,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkForExtraTurn(player, array, extraTurn);
             }else if ([5,39].includes(property.id)){
                 payTax(player, property, array);
-            }else if (property.id == 21){
-                console.log('collect cash from the middle')
-                checkForExtraTurn(player, array, extraTurn);
             }else if (property.id == 31){
                 console.log('go to jail')
                 goToJailMessage();
                 movePlayerDirectlyToLocation(player, 11, array, extraTurn);
             }else{
-                checkForExtraTurn(player, array, extraTurn);
+                showMiddle.className = '';
+                const newButton = createOkButton();
+                newButton.addEventListener('click', ()=>{
+                    removeShowMiddle();
+                    checkForExtraTurn(player, array, extraTurn);
+                })
+                
             }
         }else{
             if (property.player.id == 1){
@@ -173,10 +182,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 askToBuy(player, property, array, extraTurn);
             } else if (property.player.id == player.id){
                 displayProperty(property);
-                youOwnThis(property);
-                checkForExtraTurn(player, array, extraTurn);
-            } 
-            else{
+                youOwnThis(player, property, array, extraTurn);
+            } else if (property.id == 13){
+                payUtilityOwner(player, property, array, extraTurn)
+            } else if (property.id == 29){
+                payUtilityOwner(player, property, array, extraTurn)
+            }else{
                 payPropertyOwner(player, property, array, extraTurn)
             }
         }
@@ -195,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showMiddle.append(newP);
         showMiddle.className = '';
         player.cash -= property.price;
+        if (player.cash<0){player.cash = 0}
         patchPlayer(player)
             .then(json=>{
                 displayPlayer(json); 
@@ -214,12 +226,23 @@ document.addEventListener('DOMContentLoaded', () => {
         removePlayerFromBoard(player);
         player.currently_on = property_id; // update player location
         patchPlayer(player)
-            .then(json=>placePlayerOnBoard(json, array, extraTurn))
+            .then(json=>{
+                showPlayerOnBoard(json);
+                checkForExtraTurn(json, array, extraTurn);
+            })
     }
-    // const stayInJail = () => {
-    //     removeChildren(diceDisplay);
-    //     showEndTurnButton();
-    // }
+    //////////CREATE OK BUTTON////////////////////////////////////////////////
+    const createOkButton = () => {
+        const newButton = document.createElement('button');
+        newButton.innerText = 'Ok';
+        showMiddle.append(newButton);
+        return newButton;
+    }
+    //////////REMOVE THE MIDDLE SHOW////////////////////////////////////////////////
+    const removeShowMiddle = () => {
+        removeChildren(showMiddle);
+        showMiddle.className = 'hidden';
+    }
     /////////////////////////////////////////////////////////////////////////////
     //////////ASKS PLAYER IF WANTS TO BUY PROPERTY////////////////////////////////////////////////
     const askToBuy = (player, property, array, extraTurn) => {
@@ -253,7 +276,20 @@ document.addEventListener('DOMContentLoaded', () => {
                             checkForExtraTurn(json, array, extraTurn);
                         })
                 })
+        }else{
+            if (showMiddle.children.length == 4){
+                showMiddle.lastChild.remove();
+            }
+            notEnoughCash(player, property);
         }
+    }
+    //////////NOT ENOUGH CASH MESSAGE////////////////////////////////////////////////
+    const notEnoughCash = (player, property) =>{
+        const newP = document.createElement('p');
+        newP.innerText = `Sorry you don't have enough cash. ${property.name} costs ${property.price}M but you only have ${player.cash}M.`;
+        newP.style = 'color: white';
+        showMiddle.append(newP);
+        showMiddle.className = '';
     }
     //////////PLAYER DOES NOT BUY PROPERTY////////////////////////////////////////////////
     const notBuyProperty = (player, array, extraTurn) => {  
@@ -261,32 +297,84 @@ document.addEventListener('DOMContentLoaded', () => {
         checkForExtraTurn(player, array, extraTurn);
     }
     //////////TELLS PLAYER THAT THEY OWN THAT PROPERTY////////////////////////////////////////////////
-    const youOwnThis = (property) => {
+    const youOwnThis = (player, property, array, extraTurn) => {
         const newP = document.createElement('p');
+        const newButton = document.createElement('button');
+        newButton.innerText = 'Ok';
         newP.innerText = `You own ${property.name}. Welcome Back!`;
         newP.style = 'color: white;';
-        showMiddle.append(newP);
+        showMiddle.append(newP, newButton);
         showMiddle.className = '';
+
+        newButton.addEventListener('click', () => {
+            removeShowMiddle();
+            checkForExtraTurn(player, array, extraTurn);
+        })
+    }
+    //////////PAYS UTILITY OWNER RENT////////////////////////////////////////////////
+    const payUtilityOwner = (player, property, array, extraTurn) => {
+        const payer = player;
+        const payee = property.player;
+        const newP = document.createElement('p');
+        const newButton = document.createElement('button');
+        const rent = 4 * (extraTurn[0]+extraTurn[1]);
+
+        newButton.innerText = 'Ok';
+        newP.style = 'color: white;';
+        showMiddle.append(newP, newButton);
+        showMiddle.className = '';
+
+        if (player.cash<rent){
+            newP.innerText = `${property.player.name} owns ${property.name}. Rent costs £${rent}M but you could only pay ${player.cash}!`;
+            payee.cash += player.cash
+            player.cash = 0
+        }else{
+            newP.innerText = `${property.player.name} owns ${property.name}. You paid them £${rent}M for rent.`;
+            payer.cash -= rent;
+            payee.cash += rent;
+        }
+
+        patchPlayer(payer)
+            .then(json=>{
+                patchPlayer(payee);
+                newButton.addEventListener('click', ()=>{
+                    removeShowMiddle();
+                    displayPlayer(json);
+                    checkForExtraTurn(json, array, extraTurn);
+                })
+            })
+        
     }
     //////////PAYS PROPERTY OWNER RENT////////////////////////////////////////////////
     const payPropertyOwner = (player, property, array, extraTurn) => {
         const payer = player;
         const payee = property.player;
         const newP = document.createElement('p');
+        const newButton = document.createElement('button');
 
-        newP.innerText = `${property.player.name} owns ${property.name}. You paid them £${property.rent}M for rent.`;
+        newButton.innerText = 'Ok';
         newP.style = 'color: white;';
-        showMiddle.append(newP);
+        showMiddle.append(newP,newButton);
         showMiddle.className = '';
 
-        payer.cash -= property.rent;
-        payee.cash += property.rent;
-
+        if (player.cash<property.rent){
+            newP.innerText = `${property.player.name} owns ${property.name}. Rent costs £${property.rent}M but you could only pay ${player.cash}!`;
+            payee.cash += player.cash
+            player.cash = 0
+        }else{
+            newP.innerText = `${property.player.name} owns ${property.name}. You paid them £${property.rent}M for rent.`;
+            payer.cash -= property.rent;
+            payee.cash += property.rent;
+        }
+        
         patchPlayer(payer)
             .then(json=>{
-                patchPlayer(payee)
-                displayPlayer(json);
-                checkForExtraTurn(json, array, extraTurn);
+                patchPlayer(payee);
+                newButton.addEventListener('click', ()=>{
+                    removeShowMiddle();
+                    displayPlayer(json);
+                    checkForExtraTurn(json, array, extraTurn);
+                })
             })
     }
     /////////////////////////////////////////////////////////////////////////////
@@ -298,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     ///////////////CHECK FOR EXTRA TURN/////////////////////////////////////
     const checkForExtraTurn = (player, array, extraTurn) => {
-        if (extraTurn){
+        if (extraTurn[0]==extraTurn[1]){
             patchPlayer(player)
                 .then(json => playerTurn(json, array))
         }else{
@@ -316,10 +404,10 @@ document.addEventListener('DOMContentLoaded', () => {
         image.src = property.url;
         image.style = 'max-height: 35%;'
       
-        const set = document.createElement('h2');
-        set.innerText = property.set + ' Colour Set'
+        const set = document.createElement('h4');
+        set.innerText = property.set + ' Set'
       
-        const price = document.createElement('h2');
+        const price = document.createElement('h4');
         price.innerText = `Price: ${property.price}M`;
       
         const rent = document.createElement('p');
@@ -337,20 +425,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayPlayer = (player) =>{
         removeChildren(playerShow)
         const name = document.createElement('h1')
-        const cash = document.createElement('h2')
-        const ul = document.createElement('ul')
+        const cash = document.createElement('h4')
         
         name.innerText = player.name;
-        cash.innerText = player.cash + 'M';
+        cash.innerText = 'Cash: ' + player.cash + 'M';
+        playerShow.append(name,cash)
 
         if (player.properties){
+            const ul = document.createElement('ul')
+            const propertiesTitle = document.createElement('h4')
+            propertiesTitle.innerText = 'Properties:'
+            playerShow.append(propertiesTitle, ul)
             player.properties.forEach(property =>{
                 const propertyLi = document.createElement('li')
                 propertyLi.innerText = property.name
                 ul.append(propertyLi)
             })    
         }
-        playerShow.append(name,cash, ul)
+        
     }
     /////////////////////////////////////////////////////////////////////////////
     //////////MAKE ARRAY OF PLAYERS FOR GAME PLAYING ORDER/////////////////////
