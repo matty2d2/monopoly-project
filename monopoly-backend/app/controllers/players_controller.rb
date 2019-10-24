@@ -15,6 +15,10 @@ class PlayersController < ApplicationController
         player.cash = params[:cash]
         player.currently_on = params[:currently_on]
         player.current_turn = params[:current_turn]
+
+        player.jail_turn = params[:jail_turn]
+        # if (params[:jail_turn] == 5){player.jail_turn = 0}
+
         player.save
         render json: PlayerSerializer.new(player).to_serialized_json
     end
