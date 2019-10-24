@@ -97,8 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
         removeChildren(showMiddle);
         removePlayerFromBoard(player);
         const diceVals = updatePositionFromRoll(player);
-        // const extraTurn = diceVals[0] == diceVals[1];
-        placePlayerOnBoard(player, array, diceVals);
+
+        checkForJail(player, diceVals);
+        
+        patchPlayer(player)
+            .then(json => {
+                displayPlayer(json);
+                placePlayerOnBoard(json, array, diceVals);
+            })
     }
     //////////REMOVE PLAYER IMG FROM BOARD/////////////////////////////
     const removePlayerFromBoard = (player) => {
@@ -116,9 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         player.currently_on  = newPos;
         if (newPos < oldPos){
             player.cash += 200;
-            patchPlayer(player)
-                .then(displayPlayer(player))
-            }
+        }
         return diceVals;
     }
     //////////ROLL DICE, DISPLAY OUTCOME/////////////////////////////
@@ -135,6 +139,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // random integer for dice value
     const getRandomInt = max => {
         return 1 + Math.floor(Math.random() * Math.floor(max));
+    }
+    ////////CHECK IF IN JAIL + LOGIC///////////////////////////////
+    const checkForJail = (player, diceVals) => {
+        if (player.jail_turn > 0){
+            if (diceVals[0]==diceVals[1]){
+                console.log("You successfully escaped jail by rolling doubles!");
+                player.jail_turn = 0;
+            }else if(player.jail_turn == 4){
+                console.log('You have served Jail-time and must now pay 50M.');
+                player.jail_turn = 0;
+                if (player.cash<50){
+                    console.log(`You could only pay ${player.cash} but they will let you off.`);
+                    player.cash = 0;
+                }else{
+                    player.cash -= 50;
+                }
+            }else {
+                console.log("You couldn't escape jail by rolling doubles. You are stuck in jail.");
+                player.currently_on = 11;
+                player.jail_turn += 1;
+            }
+            return player;
+        } 
     }
     ////////PLACE PLAYER ON BOARD TO UPDATED POSITION///////////////////////////////
     const placePlayerOnBoard = (player, array, extraTurn) => {
@@ -225,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const movePlayerDirectlyToLocation = (player, property_id, array, extraTurn) => {
         removePlayerFromBoard(player);
         player.currently_on = property_id; // update player location
+        if (property_id == 11){player.jail_turn += 1}
         patchPlayer(player)
             .then(json=>{
                 showPlayerOnBoard(json);
@@ -442,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ul.append(propertyLi)
             })    
         }
-        
+       return player; 
     }
     /////////////////////////////////////////////////////////////////////////////
     //////////MAKE ARRAY OF PLAYERS FOR GAME PLAYING ORDER/////////////////////
