@@ -1,6 +1,9 @@
 console.log('index.js');
 
+
 document.addEventListener('DOMContentLoaded', () => {
+    const community_chest = ["Advance to Go (Collect $200)","Bank error in your favor—Collect $200","Doctor's fee—Pay $50","From sale of stock you get $50","Get Out of Jail Free","Go to Jail–Go directly to jail–Do not pass Go–Do not collect $200","Grand Opera Night—Collect $50 from every player for opening night seats","Holiday Fund matures—Receive $100","Income tax refund–Collect $20","It is your birthday—Collect $10","Life insurance matures–Collect $100","Pay hospital fees of $100","Pay school fees of $150","Receive $25 consultancy fee","You are assessed for street repairs–$40 per house–$115 per hotel","You have won second prize in a beauty contest–Collect $10","You inherit $100"]
+    const chance = ["Advance to Go (Collect $200)","Advance to Illinois Ave—If you pass Go, collect $200","Advance to St. Pall Mall – If you pass Go, collect $200","Advance token to nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times the amount thrown.","Advance token to the nearest Railroad and pay owner twice the rental to which he/she {he} is otherwise entitled. If Railroad is unowned, you may buy it from the Bank.","Bank pays you dividend of $50","Get Out of Jail Free","Go Back 3 Spaces","Go to Jail–Go directly to Jail–Do not pass Go, do not collect $200","Make general repairs on all your property–For each house pay $25–For each hotel $100","Pay poor tax of $15","Take a trip to Reading Railroad–If you pass Go, collect $200","Take a walk on the Park Lane–Advance token to Park Lane","You have been elected Chairman of the Board–Pay each player $50","Your building and loan matures—Collect $150","You have won a crossword competition—Collect $100"]
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////CONSTANTS///////////////////////////////////
     console.log('Dom content loaded');
@@ -152,8 +155,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nonProperty(property)){
             if ([3,18,34].includes(property.id)){
                 console.log('Pick up a Community Chest card');
+                communityCard(community_chest, player)
             }else if ([8,23,37].includes(property.id)){
                 console.log('Pick up a Chance card');
+                chanceCard(chance, player)
             }else if ([5,39].includes(property.id)){
                 payTax(player, property);
                 console.log('add cash paid to middle');
@@ -177,6 +182,183 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+
+    ///////////////// Chance ////////////////////
+    const chanceCard = (cards, player)=>{
+        const new_card = getRandomInt(cards.length)
+        // display instruction 
+        const newP = document.createElement('p');
+        newP.innerText = `${chance[new_card]}`;
+        newP.style = 'color: white;';
+        showMiddle.append(newP);
+        showMiddle.className = '';
+
+        const utilitis = [6,13,16,26,29,36]
+        // follow the instruction 
+        switch (new_card){
+            case 0:
+                player.cash += 200;
+                break;
+            case 1: 
+                if (player.currently_on > 15 ){
+                    player.cash += 200;
+                }
+                movePlayerDirectlyToLocation(player, 15);
+                break;
+            case 2:
+                if (player.currently_on > 12 ){
+                    player.cash += 200;
+                }
+                movePlayerDirectlyToLocation(player, 12);
+                break;
+            case 3:
+                // "Advance token to nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times the amount thrown."    
+                if (player.currently_on == 8){
+                    movePlayerDirectlyToLocation(player, 14);
+                }
+                if (player.currently_on == 23){
+                    movePlayerDirectlyToLocation(player, 29);
+                }
+                if (player.currently_on == 37){
+                    movePlayerDirectlyToLocation(player, 13);
+                }
+                break;
+            case 4:
+                //"Advance token to the nearest Railroad and pay owner twice the rental to which he/she {he} is otherwise entitled. If Railroad is unowned, you may buy it from the Bank."
+                if (player.currently_on == 8){
+                    movePlayerDirectlyToLocation(player, 16);
+                }
+                if (player.currently_on == 23){
+                    movePlayerDirectlyToLocation(player, 26);
+                }
+                if (player.currently_on == 37){
+                    movePlayerDirectlyToLocation(player, 6);
+                }
+                break;
+            case 5:
+                player.cash += 50;
+            case 6:
+                //get out of jail free
+                console.log("get out of jail free");
+                break;
+            case 7:
+                // go back 3 spaces
+                if (player.currently_on == 8){
+                    movePlayerDirectlyToLocation(player, 5);
+                }
+                if (player.currently_on == 23){
+                    movePlayerDirectlyToLocation(player, 20);
+                }
+                if (player.currently_on == 37){
+                    movePlayerDirectlyToLocation(player, 34);
+                }
+                break;
+            case 8:
+                movePlayerDirectlyToLocation(player, 11);
+                break;
+            case 9:
+                console.log("Make general repairs on all your property–For each house pay $25–For each hotel $100");
+                break;
+            case 10:
+                player.cash -= 10;
+                break;
+            case 11:
+                    if (player.currently_on == 8){
+                        movePlayerDirectlyToLocation(player, 16);
+                    }
+                    if (player.currently_on == 23){
+                        movePlayerDirectlyToLocation(player, 26);
+                    }
+                    if (player.currently_on == 37){
+                        movePlayerDirectlyToLocation(player, 6);
+                        player.cash += 200
+                    }
+                break;
+            case 12:
+                    movePlayerDirectlyToLocation(player, 38);
+                break;
+            case 13:
+                //"You have been elected Chairman of the Board– Pay each player $50"
+                player.cash -= 50;
+                break;
+            case 14:
+                player.cash += 150;
+                break;
+            case 15:
+                player.cash += 100;
+               
+        }
+
+    }
+    ///////////////// Community Chest ////////////////////
+    const communityCard = (cards, player)=>{
+        const new_card = getRandomInt(cards.length)
+        // display instruction 
+        const newP = document.createElement('p');
+        newP.innerText = `${community_chest[new_card]}`;
+        newP.style = 'color: white;';
+        showMiddle.append(newP);
+        showMiddle.className = '';
+
+        // follow the instruction 
+        switch (new_card){
+            case 0:
+                movePlayerDirectlyToLocation(player, 1);
+                break;
+            case 1: 
+                player.cash += 200;
+                break;
+            case 2:
+                player.cash -= 50;
+                break;
+            case 3:
+                player.cash += 50;
+                break;
+            case 4:
+                //get out of jail free
+                console.log("get out of jail free");
+                break;
+            case 5:
+                movePlayerDirectlyToLocation(player, 11);
+            case 6:
+                player.cash += 50;
+                break;
+                // deduct 50 from all player
+                console.log("get 50 from all player");
+                break;
+            case 7:
+                player.cash += 100;
+                break;
+            case 8:
+                player.cash += 20;
+                break;
+            case 9:
+                player.cash += 10;
+                break;
+            case 10:
+                player.cash += 100;
+                break;
+            case 11:
+                player.cash -= 100;
+                break;
+            case 12:
+                player.cash -= 150;
+                break;
+            case 13:
+                player.cash += 25;
+                break;
+            case 14:
+                // You are assessed for street repairs–$40 per house–$115 per hotel
+                break;
+            case 15:
+                player.cash += 10;
+                break;
+            case 16:
+                player.cash += 100;
+        }
+
+    }
+    ///////////////////////////////////
 
     const goToJailMessage = () => {
         const newP = document.createElement('p');
