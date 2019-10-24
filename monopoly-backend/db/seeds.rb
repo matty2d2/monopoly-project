@@ -58,3 +58,6 @@ chance1 = Property.create(name: 'Chance', set: 'Chance', player: the_bank, url: 
 park_lane = Property.create(name: 'Park Lane', set: 'Dark Blue', price: 350, rent: 35, mortgage_val: 175, player: the_bank, url: "../monopoly-frontend/src/images/38.png")
 super_tax = Property.create(name: 'Super Tax', set: 'Tax', price: 100, player: the_bank, url: "../monopoly-frontend/src/images/39.png")
 mayfair = Property.create(name: 'Mayfair', set: 'Dark Blue', price: 400, rent: 50, mortgage_val: 200, player: the_bank, url: "../monopoly-frontend/src/images/40.png")
+
+
+
