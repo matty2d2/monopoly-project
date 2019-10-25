@@ -2,28 +2,36 @@ console.log('board setup');
 
 const row = [0,1,2,3,4,5,6,7,8];
 const theBoard = document.getElementById('the-board');
+const imgUrl = 'https://i.pinimg.com/originals/ae/cf/f5/aecff5f058348b20be3a41d3bc306800.jpg';
 
-const middleBoard = document.createElement('div');
-middleBoard.id = 'middle-board';
-theBoard.append(middleBoard);
+const boardImg = document.createElement('img');
+    boardImg.src = imgUrl;
+    boardImg.id = 'board-img';
+    theBoard.append(boardImg);
 
-const middleShow = document.createElement('div');
-middleShow.id = 'middle-show';
-middleShow.className = 'hidden';
-middleBoard.append(middleShow);
+    const middleBoard = document.createElement('div');
+    middleBoard.id = 'middle-board';
+    theBoard.append(middleBoard);
 
-const endDiv = document.createElement('div');
-endDiv.id = 'end-button-container';
-middleBoard.append(endDiv);
+    const middleShow = document.createElement('div');
+    middleShow.id = 'middle-show';
+    middleShow.className = 'hidden';
+    middleBoard.append(middleShow);
 
-const diceDiv = document.createElement('div');
-diceDiv.id = 'dice-area';
-middleBoard.append(diceDiv);
+    const endDiv = document.createElement('div');
+    endDiv.id = 'end-button-container';
+    middleBoard.append(endDiv);
 
-const rollsDisplay = document.createElement('div');
-rollsDisplay.id = 'rolls-display';
-rollsDisplay.style = 'padding-top: 5%;'
-diceDiv.append(rollsDisplay);
+    const diceDiv = document.createElement('div');
+    diceDiv.id = 'dice-area';
+    middleBoard.append(diceDiv);
+
+    const rollsDisplay = document.createElement('div');
+    rollsDisplay.id = 'rolls-display';
+    rollsDisplay.style = 'padding-top: 5%;'
+    diceDiv.append(rollsDisplay);
+
+    /////////////////////////////////////////////////////////
 
 const createBotVerticalCards = (j, array) => {
     row.forEach(i=>{

@@ -14,9 +14,9 @@ ActiveRecord::Schema.define(version: 2019_10_21_080808) do
 
   create_table "players", force: :cascade do |t|
     t.string "name"
-    t.integer "cash"
+    t.integer "cash", default: 1500
     t.string "piece"
-    t.integer "currently_on"
+    t.integer "currently_on", default: 1
     t.boolean "current_turn", default: false
     t.integer "jail_turn", default: 0
     t.datetime "created_at", precision: 6, null: false
