@@ -1,22 +1,29 @@
 console.log('index.js');
 
 document.addEventListener('DOMContentLoaded', () => {
-    const community_chest = ["Advance to Go (Collect $200)","Bank error in your favor—Collect $200","Doctor's fee—Pay $50","From sale of stock you get $50","Get Out of Jail Free","Go to Jail–Go directly to jail–Do not pass Go–Do not collect $200","Grand Opera Night—Collect $50 from every player for opening night seats","Holiday Fund matures—Receive $100","Income tax refund–Collect $20","It is your birthday—Collect $10","Life insurance matures–Collect $100","Pay hospital fees of $100","Pay school fees of $150","Receive $25 consultancy fee","You are assessed for street repairs–$40 per house–$115 per hotel","You have won second prize in a beauty contest–Collect $10","You inherit $100"]
-    const chance = ["Advance to Go (Collect $200)","Advance to Illinois Ave—If you pass Go, collect $200","Advance to St. Pall Mall – If you pass Go, collect $200","Advance token to nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times the amount thrown.","Advance token to the nearest Railroad and pay owner twice the rental to which he/she {he} is otherwise entitled. If Railroad is unowned, you may buy it from the Bank.","Bank pays you dividend of $50","Get Out of Jail Free","Go Back 3 Spaces","Go to Jail–Go directly to Jail–Do not pass Go, do not collect $200","Make general repairs on all your property–For each house pay $25–For each hotel $100","Pay poor tax of $15","Take a trip to Reading Railroad–If you pass Go, collect $200","Take a walk on the Park Lane–Advance token to Park Lane","You have been elected Chairman of the Board–Pay each player $50","Your building and loan matures—Collect $150","You have won a crossword competition—Collect $100"]
+    console.log('Dom content loaded');
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////CONSTANTS///////////////////////////////////
-    console.log('Dom content loaded');
+    const community_chest = ["Advance to Go (Collect $200)","Bank error in your favor—Collect $200","Doctor's fee—Pay $50","From sale of stock you get $50","Get Out of Jail Free","Go to Jail–Go directly to jail–Do not pass Go–Do not collect $200","Grand Opera Night—Collect $50 from every player for opening night seats","Holiday Fund matures—Receive $100","Income tax refund–Collect $20","It is your birthday—Collect $10","Life insurance matures–Collect $100","Pay hospital fees of $100","Pay school fees of $150","Receive $25 consultancy fee","You are assessed for street repairs–$40 per house–$115 per hotel","You have won second prize in a beauty contest–Collect $10","You inherit $100"]
+    const chance = ["Advance to Go (Collect $200)","Advance to Illinois Ave—If you pass Go, collect $200","Advance to St. Pall Mall – If you pass Go, collect $200","Advance token to nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times the amount thrown.","Advance token to the nearest Railroad and pay owner twice the rental to which he/she {he} is otherwise entitled. If Railroad is unowned, you may buy it from the Bank.","Bank pays you dividend of $50","Get Out of Jail Free","Go Back 3 Spaces","Go to Jail–Go directly to Jail–Do not pass Go, do not collect $200","Make general repairs on all your property–For each house pay $25–For each hotel $100","Pay poor tax of $15","Take a trip to Reading Railroad–If you pass Go, collect $200","Take a walk on the Park Lane–Advance token to Park Lane","You have been elected Chairman of the Board–Pay each player $50","Your building and loan matures—Collect $150","You have won a crossword competition—Collect $100"]
 
+    const redCirlceUrl = 'https://www.emoji.co.uk/files/apple-emojis/symbols-ios/956-large-red-circle.png';
+    const blueCircleUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Circle-blue.svg/512px-Circle-blue.svg.png';
+    const greenCircleUrl = 'https://www.pinclipart.com/picdir/middle/157-1571732_button-clipart-green-circle-green-button-icon-png.png';
+    const pinkCircleUrl = 'https://www.pngfind.com/pngs/m/3-37199_vector-circle-design-png-pink-circle-with-design.png';
     ///////////////////////////////DOM CONSTANTS/////////////////////////////////
     const diceDisplay = document.getElementById('rolls-display');
     const propertyShow = document.getElementById('show-property');
     const playerShow = document.getElementById('show-player');
     const showMiddle = document.getElementById('middle-show');
     const endButtonContainer = document.getElementById('end-button-container');
+    const createForm = document.getElementById('create-player-form');
+    const theBoard = document.getElementById('the-board');
 
     const nonPropertyArray = [1,3,5,8,11,18,21,23,31,34,37,39];
     /////////////////////////////////////////////////////////////////////////////
     const playGame = (playerArray) => {
+        makeQuitGameButton();
         const idArray = playerArray.map(player => player.id);
         const currentPlayer = playerArray.find(player => player.current_turn == true)
         playerArray.forEach(placePlayerNoAction) //places players on their board position and doesnt trigger actions
@@ -39,6 +46,30 @@ document.addEventListener('DOMContentLoaded', () => {
             })
     }
     /////////////////////////////////////////////////////////////////////////////
+    const makeQuitGameButton = () => {
+        const quitGameDiv = document.getElementById('quit-game');
+        const quitButton = document.createElement('button');
+        quitButton.innerText = 'Quit Game';
+        quitButton.addEventListener('click', quitGame)
+        quitGameDiv.append(quitButton);
+    }
+    /////////////////////////////////////////////////////////////////////////////
+    const quitGame = (e) => {
+        e.target.remove();
+        getPlayers()
+            .then(json => {
+                const playerArray = json;
+                while (playerArray.length>1){
+                    removePlayerFromBoard(playerArray.pop());
+                }
+                resetGame();
+                removeChildren(diceDisplay);
+                removeChildren(endButtonContainer);
+                removeChildren(showMiddle);
+                showMiddle.className = 'hidden';
+                createForm.className = '';
+            })
+    }
     ////////////DISPLAY WHOS TURN IT IS///////////////////////////////
     const displayPlayerTurn = (player) => {
         const newP = document.createElement('p');
@@ -137,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const die1 = getRandomInt(6);
         const die2 = getRandomInt(6);
         const newP = document.createElement('p');
-        newP.style = 'padding-top: 5%;'
+        newP.style = 'padding-top: 20%;'
         newP.innerText = `Rolled: ${die1} , ${die2}`;
         removeChildren(diceDisplay);
         diceDisplay.append(newP);
@@ -228,17 +259,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+    /////////////////////////////////////////////////////////////////////////////
     ///////////////// Chance ////////////////////
     const chanceCard = (cards, player)=>{
-        const new_card = getRandomInt(cards.length)
+        const new_card = getRandomInt(cards.length);
         // display instruction 
         const newP = document.createElement('p');
         newP.innerText = `${chance[new_card]}`;
         newP.style = 'color: white;';
         showMiddle.append(newP);
         showMiddle.className = '';
-
-        const utilitis = [6,13,16,26,29,36]
+    
+        const utilities = [6,13,16,26,29,36]
         // follow the instruction 
         switch (new_card){
             case 0:
@@ -305,22 +337,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log("Make general repairs on all your property–For each house pay $25–For each hotel $100");
                 break;
             case 10:
-                player.cash -= 10;
+                player.cash -= 15;
                 break;
             case 11:
-                    if (player.currently_on == 8){
-                        movePlayerDirectlyToLocation(player, 16);
-                    }
-                    if (player.currently_on == 23){
-                        movePlayerDirectlyToLocation(player, 26);
-                    }
-                    if (player.currently_on == 37){
-                        movePlayerDirectlyToLocation(player, 6);
-                        player.cash += 200
-                    }
+                if (player.currently_on == 8){
+                    movePlayerDirectlyToLocation(player, 16);
+                }else if (player.currently_on == 23){
+                    movePlayerDirectlyToLocation(player, 26);
+                }else if (player.currently_on == 37){
+                    movePlayerDirectlyToLocation(player, 6);
+                    player.cash += 200
+                }
                 break;
             case 12:
-                    movePlayerDirectlyToLocation(player, 38);
+                movePlayerDirectlyToLocation(player, 38);
                 break;
             case 13:
                 //"You have been elected Chairman of the Board– Pay each player $50"
@@ -331,22 +361,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 15:
                 player.cash += 100;
-               
+                break;
         }
-
+    
     }
     ///////////////// Community Chest ////////////////////
     const communityCard = (cards, player)=>{
-        const new_card = getRandomInt(cards.length)
+        const new_card = getRandomInt(cards.length);
         // display instruction 
         const newP = document.createElement('p');
         newP.innerText = `${community_chest[new_card]}`;
         newP.style = 'color: white;';
         showMiddle.append(newP);
         showMiddle.className = '';
-
+    
         // follow the instruction 
-        switch (new_card){
+        switch (new_card - 1){
             case 0:
                 movePlayerDirectlyToLocation(player, 1);
                 break;
@@ -401,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 16:
                 player.cash += 100;
         }
-
+    
     }
     /////////////////////////////////////////////////////////////////////////////
     /////////////CHECKS IF NON-PROPERTY//////////////////////////////////
@@ -667,26 +697,61 @@ document.addEventListener('DOMContentLoaded', () => {
             })
     }
     /////////////////////////////////////////////////////////////////////////////
+    const  startGame = () => {
+        getPlayers()
+            .then(json=>{
+                if (json.length==1){
+                    createForm.className = '';
+                }else{
+                    removeDivCards();
+                    createForm.className = 'hidden';
+                    getProperties()
+                        .then(createBoardDivs)
+                        .then(makePlayersArray)
+                }
+            })
+        
+    }
+    //////////REMOVE DIV CARDS FROM BOARD (SO NOT TO DUPLICATE)//////////////////////////////
+    const removeDivCards = () => {
+        const horizontalDivs = [...document.getElementsByClassName('horizontal-card')];
+        const verticalDivs = [...document.getElementsByClassName('vertical-card')];
+        const sqrDivs = [...document.getElementsByClassName('sqr-card')];
+
+        if (horizontalDivs.length > 0){
+            horizontalDivs.forEach(div=>div.remove());
+            verticalDivs.forEach(div=>div.remove());
+            sqrDivs.forEach(div=>div.remove());
+        }
+    }
+
+    //////////// THE FORM IS BELOW//////////////
+    const createPlayersAndStartGame = (e) => {
+        e.preventDefault();
+
+        const players = {
+            player1: { name: e.target.name1.value, piece: redCirlceUrl},
+            player2: { name: e.target.name2.value, piece: blueCircleUrl},
+            player3: { name: e.target.name3.value, piece: greenCircleUrl},
+            player4: { name: e.target.name4.value, piece: pinkCircleUrl},
+        }
+        e.target.reset();
+        // const piece = "./src/images/pic1.jpeg";
+        postPlayers(players)
+            .then(()=>startGame())
+    }
+    /////////////////////////
+    createForm.addEventListener('submit', createPlayersAndStartGame);
+
+
     ////////RUN THE GAME///////
-    getProperties()
-        .then(createBoardDivs)
-        .then(makePlayersArray)
+    startGame();
 
 })
 
 
 
-/// THE FORM IS BELOW//////////////
 
-// const form = document.querySelector('form')
-// form.addEventListener('submit', e=>{
-//     e.preventDefault()
-    
-//     const name = e.target.name.value;
-//     const number = e.target.number.value;
-//     const cash = 1500;
-//     const piece = "./src/images/pic1.jpeg";
-//     const currently_on = 0;
-//     const new_player = { name: name, cash: cash, piece: piece, currently_on: currently_on }
-//     postPlayer(new_player)
-// })
+
+
+

@@ -12,18 +12,29 @@
       <h1>
         <img src="https://fontmeme.com/permalink/191018/0bf4ec471be9e47c193e19070c0592f1.png" alt="title-font" border="0" id='title'> 
       </h1>
+      <div id='quit-game'></div>
     </header>
 
     <main>
-      <!-- <form action="" class="form">
-        <input name="name" type="text" placeholder="name...">
-        <input type="number" name="number" placeholder="number of player...">
-        <input type="submit" value="Start">
-      </form> -->
+      <div id='form-div'>
+        <form action="" class="form" id='create-player-form'>
+          <label for="">Player 1:</label>
+          <input type="text" name="name1" placeholder="name.." required> <br> <br>
+          <label for="">Player 2:</label>
+          <input type="text" name="name2" placeholder="name.." required> <br> <br>
+          <label for="">Player 3:</label>
+          <input type="text" name="name3" placeholder="optional player"> <br> <br>
+          <label for="">Player 4:</label>
+          <input type="text" name="name4" placeholder="optional player"> <br> <br>
+          <!-- <input type="number" name="number" placeholder="number of player..."> -->
+          <input type="submit" value="Start">
+        </form>
+      </div>
+
       <div id='board-container'>
         <div class='board-sides'></div>
         <div id='the-board'>
-            <img src='https://i.pinimg.com/originals/ae/cf/f5/aecff5f058348b20be3a41d3bc306800.jpg' alt="" id='board-img'>
+            <!-- <img src='https://i.pinimg.com/originals/ae/cf/f5/aecff5f058348b20be3a41d3bc306800.jpg' alt="" id='board-img'> -->
         </div>
         <div></div>
       </div>

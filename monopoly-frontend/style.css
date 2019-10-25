@@ -132,3 +132,14 @@ main {
       left: 5%;
       top: 5%;
   }
+
+#quit-game{
+    float: right;
+
+}
+
+#form-div{
+    padding: 5%;
+    text-align: center;
+}
+

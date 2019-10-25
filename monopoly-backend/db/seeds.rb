@@ -13,9 +13,9 @@ red_circle_url = 'https://www.emoji.co.uk/files/apple-emojis/symbols-ios/956-lar
 blue_circle_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Circle-blue.svg/512px-Circle-blue.svg.png';
 
 ############## PLAYERS #######################
-the_bank = Player.create(name: 'The Bank')
-player1 = Player.create(name: 'Abdullah', cash: 1500, piece: red_circle_url, currently_on: 1)
-player2 = Player.create(name: 'Matt', cash: 1500, piece: blue_circle_url, currently_on: 1)
+the_bank = Player.create(name: 'The Bank', cash: 50000)
+player1 = Player.create(name: 'Abdullah', piece: red_circle_url)
+player2 = Player.create(name: 'Matt', piece: blue_circle_url)
 
 ############## PROPERTIES #######################
 go = Property.create(name: 'Go', player: the_bank)
