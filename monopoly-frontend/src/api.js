@@ -51,9 +51,9 @@ const getPlayer = player =>{
     .then(objectify)
 }
 
-const postPlayer = player =>{
+const postPlayers = players =>{
   const method = "POST"
-  return fetch(playersURL, configObj(player, method))
+  return fetch(playersURL, configObj(players, method))
     .then(objectify)
 } 
 
@@ -62,3 +62,6 @@ const getPlayers = () => {
     .then(objectify)
 }
 
+const resetGame = () => {
+  return fetch('http://localhost:3000/resetgame')
+}
